@@ -1,14 +1,17 @@
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 
-const int N = 10000;
+class ContinuedFraction {
+    int head;
+    int period;
+    std::vector<int> sequence;
 
-int main() {
-    int numberOfOddPeriods = 0;
-    for (int n = 1; n <= N; ++n) {
-	int a0 = 0, r = 0, d = 1;
-	while (n - (r - 1) * (r - 1) >= 0) --r, ++a0;
+public:
+    ContinuedFraction(int n): head(0), period(0) {
+	int r = 0, d = 1;
+	while (n - (r - 1) * (r - 1) >= 0) --r, ++head;
 	d = n - r * r;
 	r = -r;
 
@@ -17,18 +20,29 @@ int main() {
 	    int sig = d * n + r;
 
 	    if (pool.find(sig) != pool.end()) {
-		if ((i - pool[sig]) % 2) ++numberOfOddPeriods;
+		period = i - pool[sig];
 		break;
 	    }
 
 	    pool[sig] = i;
-
-	    int a = 0;
-	    while (n - (r - d) * (r - d) >= 0) ++a, r -= d;
+	    sequence.push_back(0);
+	    while (n - (r - d) * (r - d) >= 0) ++sequence.back(), r -= d;
 	    d = (n - r * r) / d;
 	    r = -r;
 	}
     }
+
+    int getHead() const { return head; }
+    int getPeriod() const { return period; }
+    const std::vector<int>& getSequence() const { return sequence; }
+};
+
+const int N = 10000;
+
+int main() {
+    int numberOfOddPeriods = 0;
+    for (int n = 1; n <= N; ++n) 
+	if (ContinuedFraction(n).getPeriod() % 2) ++numberOfOddPeriods;
 
     std::cout << numberOfOddPeriods << "\n";
     return 0;
