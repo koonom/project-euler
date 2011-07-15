@@ -13,11 +13,11 @@ int totient(int n) {
     int m = n / d, k = 1;
     while (m % d == 0) m /= d, ++k;
 
-    int p = 1;
-    for (int i = 0; i < k; ++i) p *= d; // d^k
+    int p_k = 1;
+    for (int i = 0; i < k; ++i) p_k *= d; 
 
-    if (m > 1) return totient(m) * totient(p);
-    else return p / d * (d - 1);
+    if (m > 1) return totient(m) * totient(p_k); // \phi(mn) = \phi(m) \phi(n) 
+    else return p_k / d * (d - 1); // \phi(p^k) = p^k (1 - 1 / p)
 }
 
 int main() {
