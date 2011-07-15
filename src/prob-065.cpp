@@ -2,6 +2,8 @@
 #include <vector>
 #include <gmpxx.h>
 
+#include "ContinuedFraction.hpp"
+
 int main() {
     std::vector<int> seq = { 2 };
     for (int n = 1; seq.size() < 100; ++n) {
@@ -10,17 +12,11 @@ int main() {
 	seq.push_back(1);
     }
 
-    int ndigits = 99; // the 100th term
-    mpq_class n(0);
-    for (int d = ndigits; d >= 1; --d) {
-	n += seq[d];
-	mpq_inv(n.get_mpq_t(), n.get_mpq_t());
-    }
-
-    n += seq[0];
+    ContinuedFraction fraction(seq);
+    mpq_class c = fraction.getConvergent(100);
 
     int sum = 0;
-    std::string number = n.get_num().get_str();
+    std::string number = c.get_num().get_str();
     for (int i = 0; i < number.size(); ++i) sum += number[i] - '0';
 
     std::cout << sum << "\n";
