@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 class PythagoreanTriple {
 protected:
