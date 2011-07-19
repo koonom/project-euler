@@ -1,6 +1,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "PythagoreanTriple.hpp"
+
 const int T = 2000;
 
 int main() {
