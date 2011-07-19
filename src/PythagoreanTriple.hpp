@@ -44,6 +44,14 @@ public:
     }
 };
 
+bool operator<(const PythagoreanTriple& t1, const PythagoreanTriple& t2) {
+    return t1.a < t2.a || t1.a == t2.a && t1.b < t2.b;
+}
+
+bool operator>(const PythagoreanTriple& t1, const PythagoreanTriple& t2) {
+    return t1.a > t2.a || t1.a == t2.a && t1.b > t2.b;
+}
+
 std::ostream& operator<<(std::ostream& out, const PythagoreanTriple& triple) {
     triple.print(out);
     return out;
