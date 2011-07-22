@@ -3,8 +3,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
-const int SENTINEL = -1;
-
 char letters[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
 int values[] = { 1, 5, 10, 50, 100, 500, 1000 };
 
@@ -25,12 +23,16 @@ int romanToInt(const std::string& s) {
 	int jj = j < s.size()? romanToInt(s[j]): 0;
 
 	if (ii < jj) {
-	    if ((ii == 1 || ii == 10 || ii == 100) && jj <= 10 * ii) sum -= value;
-	    else return 0;
-	}
-	else sum += value;
+	    if (ii != 1 && ii != 10 & ii != 100 && jj > 10 * ii) return 0;
+	    if (j + 1 < s.size() && s[j + 1] == s[j]) return 0;
 
-	i = j;
+	    sum += jj - value;
+	    i = j + 1;
+	}
+	else {
+	    sum += value;
+	    i = j;
+	}
     }
 
     return sum;
@@ -81,6 +83,7 @@ bool intToRoman(int n, int lb, int ub, std::string& result) {
 	int nn = -n;
 
 	if (ub != 0 && ub != 2 && ub != 4) return false;
+	if (nn > values[ub]) return false; // Key
 
 	int q = nn / values[ub], r = nn % values[ub];
 
@@ -97,56 +100,7 @@ bool intToRoman(int n, int lb, int ub, std::string& result) {
 	bestSoFar = prefix + buf;
 	result.insert(0, prefix);
 	result.append(buf);
-	//--------------------------------------------------
-	// if (nn < values[ub]) {
-	//     int q = 1;
-	//     int r = values[ub] - nn; // > 0
-	//-------------------------------------------------- 
-
-	//--------------------------------------------------
-	//     std::string buf(1, letters[ub]);
-	//-------------------------------------------------- 
-
-	//--------------------------------------------------
-	//     std::string buf2;
-	//     std::cerr << head << " 3: " << buf << '|' << result << " " << r << std::endl;
-	//     if (!intToRoman(r, lb, ub + 1, buf2)) return false;
-	//-------------------------------------------------- 
-
-	//--------------------------------------------------
-	//     std::cerr << head << " [3] " << buf << " ? " << buf2 << std::endl;
-	//-------------------------------------------------- 
-
-	//--------------------------------------------------
-	//     bestSoFar = buf + buf2;
-	//     result.insert(0, buf);
-	//     result.append(buf2);
-	// }
-	// else {
-	//     int q = nn / values[ub];
-	//     int r = nn % values[ub];
-	//-------------------------------------------------- 
-
-	//--------------------------------------------------
-	//     buf.append(q, letters[ub]);
-	//     int p = ub - 2 + ub % 2;
-	//     std::cerr << head << " 4: " << -r << ' ' << buf << '|' << result << std::endl;
-	//     if (!intToRoman(-r, lb, p, buf)) return false;
-	//-------------------------------------------------- 
-
-	//--------------------------------------------------
-	//     bestSoFar = buf;
-	//     std::cerr << head << " [4] " << bestSoFar << std::endl;
-	//-------------------------------------------------- 
-
-	//--------------------------------------------------
-	//     result.insert(0, bestSoFar);
-	// }
-	//-------------------------------------------------- 
-
     }
-
-    // std::cout << " -> " << result << "\n";
 
     return !bestSoFar.empty();
 }
