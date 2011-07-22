@@ -6,6 +6,10 @@
 char letters[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
 int values[] = { 1, 5, 10, 50, 100, 500, 1000 };
 
+std::string ones[] = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
+std::string tens[] = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC", "C" };
+std::string hundreds[] = { "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM", "M" };
+
 int romanToInt(char c) {
     for (int i = 0; i < 7; ++i)
 	if (c == letters[i]) return values[i];
@@ -38,77 +42,10 @@ int romanToInt(const std::string& s) {
     return sum;
 }
 
-bool intToRoman(int n, int lb, int ub, std::string& result) {
-    std::string head = boost::str(boost::format("%d (%d, %d)") % n % lb % ub);
-
-    if (n == 0) return true;
-
-    std::string bestSoFar;
-
-    if (n > 0) {
-	for (int i = lb; i < ub; ++i) {
-	    // Case 1: q...q + r
-	    int q = n / values[i];
-	    int r = n % values[i];
-
-	    if (n >= values[i]) {
-		std::string buf(q, letters[i]);
-		std::cerr << head << " 1: " << result << '|' << buf << " " << r << std::endl;
-		if (!intToRoman(r, lb, i, buf)) continue;
-		if (bestSoFar.empty() || bestSoFar.size() > buf.size()) {
-		    bestSoFar = buf;
-		    std::cerr << head << " [1] " << bestSoFar << std::endl;
-		}
-	    }
-
-	    // Case 2: q...q + r q
-	    if (r > 0) {
-		r -= values[i]; // < 0
-
-		std::string buf(q, letters[i]), buf2(1, letters[i]);
-		std::cerr << head << " 2: " << result << '|' << buf << ' ' << r << ' ' << buf2 << std::endl;
-		if (!intToRoman(r, lb, i % 2 + i - 2, buf2)) continue; // abuse, note 2
-		buf += buf2;
-
-		if (bestSoFar.empty() || bestSoFar.size() > buf.size()) {
-		    bestSoFar = buf;
-		    std::cerr << head << " [2] " << bestSoFar << std::endl;
-		}
-	    }
-	}
-
-	result.append(bestSoFar);
-    }
-    else {
-	int nn = -n;
-
-	if (ub != 0 && ub != 2 && ub != 4) return false;
-	if (nn > values[ub]) return false; // Key
-
-	int q = nn / values[ub], r = nn % values[ub];
-
-	if (r > 0) {
-	    q += 1;
-	    r -= values[ub];
-	}
-
-	// Case 3:  qqq ??? rrr
-	std::string buf, prefix(q, letters[ub]);
-	std::cerr << head << " 3: " << prefix << " (" << result << ") " << r << std::endl;
-	if (!intToRoman(-r, lb, ub + 1, buf)) return false; // -r > 0
-
-	bestSoFar = prefix + buf;
-	result.insert(0, prefix);
-	result.append(buf);
-    }
-
-    return !bestSoFar.empty();
-}
-    
-
 std::string intToRoman(int n) {
+    int m = n / 1000, c = n / 100 % 10, x = n / 10 % 10, i = n % 10;
     std::string result;
-    intToRoman(n, 0, 7, result); // allow all combinations
+    result.append(m, 'M').append(hundreds[c]).append(tens[x]).append(ones[i]);
     return result;
 }
 
@@ -117,22 +54,8 @@ int main() {
     std::string numeral;
 
     while (std::cin >> numeral) {
-	int r;
-
-	if (numeral[0] >= '0' && numeral[0] <= '9') {
-	    int r = boost::lexical_cast<int>(numeral);
-
-	    std::cout << r << " " << intToRoman(r) << std::endl;
-	}
-	else {
-	    int r = romanToInt(numeral);
-	    std::string newNumeral = intToRoman(r);
-	    bool same = r == romanToInt(newNumeral);
-	    int saved = numeral.size() - newNumeral.size();
-	    totalSaved += saved;
-	
-	    std::cout << numeral << " " << newNumeral << (same? " ": "* ") << r << " " << saved << std::endl;
-	}
+	std::string newNumeral = intToRoman(romanToInt(numeral));
+	totalSaved += numeral.size() - newNumeral.size();
     }
     
     std::cout << totalSaved << "\n";
