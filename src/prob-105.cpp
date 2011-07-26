@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <numeric>
@@ -51,17 +52,26 @@ int main() {
 	    in.ignore();
 	}
 
+	// Arrgh.  This is important
+	sort(s.begin(), s.end());
+
+	bool passed = true;
+
 	int lhs = s[0], rhs = 0;
 	for (int i = 1, j = s.size() - 1; i < j; ++i, --j) {
 	    lhs += s[i];
 	    rhs += s[j];
-	    if (lhs <= rhs) return 0;
+	    if (lhs <= rhs) {
+		passed = false;
+		break;
+	    }
 	}
+
+	if (!passed) continue;
 
 	std::vector<int> choose(s.size());
 	reset(choose.begin(), choose.end());
 
-	bool passed = true;
 	while (next(choose.begin(), choose.end())) {
 	    int size1 = 0, size2 = 0;
 	    int sum1 = 0, sum2 = 0;
