@@ -7,6 +7,9 @@ const int N = 1000000;
 int maxChainSize[N];
 
 // NOTE: Not bad, but still quite unsatisfactory
+//
+// I think by storing calculated chain size we're able to prune quite 
+// a few search paths early on.
 int main() {
     int factorial[10] = { 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880 };
     std::unordered_map<int, int> nextNumber;
