@@ -4,7 +4,7 @@
 
 #include "ContinuedFraction.hpp"
 
-// NOTE: I got stuck for two days and try bruteforcing my way out.
+// NOTE: I got stuck for two days while bruteforcing my way out.
 //
 // Courtesy of http://mukeshiiitm.wordpress.com/2011/02/11/project-euler-problem-100/
 int main() {
