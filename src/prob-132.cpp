@@ -23,10 +23,10 @@ int main() {
 	}
 
 	if (j > M) continue;
-	if (M % j == 0) {
-	    sum += n;
-	    ++i;
-	}
+	if (M % j) continue;
+
+	sum += n;
+	++i;
     }
 
     std::cout << sum << "\n";
