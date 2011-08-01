@@ -26,6 +26,9 @@ int totient(int n) {
 }
 
 // NOTE: Wanna do more optimization
+//
+// This is one of the classic problem that I like.  Check out more optimization
+// idea on the Project Euler forum.
 int main() {
     for (int n = 2; n <= N / 2; ++n)
 	if (!composite[n]) 
