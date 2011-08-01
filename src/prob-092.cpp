@@ -1,10 +1,11 @@
 #include <iostream>
-#include <vector>
 
 const int N = 10000000;
 int ends[N];
 
 // NOTE: Any smart way to optimize?
+//
+// The answer is yes.  Check on the 576 idea
 int main() {
     int endsAt89 = 0;
     ends[1] = 1;
