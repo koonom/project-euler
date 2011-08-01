@@ -3,6 +3,7 @@
 
 const int T = 1000000;
 
+// NOTE: I'm gonna find time and redo this using Pythagorean triples
 int main() {
     int m = 0;
 
