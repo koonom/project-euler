@@ -13,9 +13,7 @@ int gcd(int n, int m) { // asume n > m
     }
 }
 
-// NOTE: Did I miss something here?
-//
-// Check out the awesome optimizaion on the website
+// NOTE: Check out the awesome optimizaion on the website
 int main() {
     for (int n = 2; n <= D / 2; ++n)
 	if (!composite[n]) 
