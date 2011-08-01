@@ -21,7 +21,7 @@ int totient(int n) {
     int p_k = 1;
     for (int i = 0; i < k; ++i) p_k *= d; 
 
-    if (m > 1) return totient(m) * totient(p_k); // \phi(mn) = \phi(m) \phi(n) 
+    if (m > 1) return totient(m) * p_k / d * (d - 1); // \phi(mn) = \phi(m) \phi(n) 
     else return p_k / d * (d - 1); // \phi(p^k) = p^k (1 - 1 / p)
 }
 
@@ -39,16 +39,10 @@ int main() {
 	double ratio = double(n) / t;
 	if (ratio >= minRatio) continue;
 
-	std::string nn = boost::lexical_cast<std::string>(n);
-	std::string tt = boost::lexical_cast<std::string>(t);
-
-	if (nn.size() != tt.size()) continue;
-
 	int digits[10];
 	for (int i = 0; i < 10; ++i) digits[i] = 0;
-
-	for (std::string::iterator i = nn.begin(); i != nn.end(); ++i) ++digits[*i - '0'];
-	for (std::string::iterator i = tt.begin(); i != tt.end(); ++i) --digits[*i - '0'];
+	for (int m = n; m; m /= 10) ++digits[m % 10];
+	for (int m = t; m; m /= 10) --digits[m % 10];
 
 	bool good = true;
 	for (int i = 0; i < 10; ++i) 
