@@ -2,6 +2,8 @@
 #include <gmpxx.h>
 
 // NOTE: Runs in 1 minutes.  Not satisfactory.
+//
+// Gotta redo this using Pythagorean triples
 int main() {
     const int N = 1000000000;
 

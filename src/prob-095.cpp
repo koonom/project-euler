@@ -5,6 +5,7 @@
 const int N = 1000000;
 int amicableNumber[N + 1];
 
+// NOTE: I had an idea while reading forum posts
 int main() {
     for (int n = 1; n <= N / 2; ++n)
 	for (int m = n + n; m <= N; m += n) amicableNumber[m] += n;
