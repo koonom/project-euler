@@ -4,6 +4,8 @@
 const int N = 50000000;
 int nsols[N + 1];
 
+// NOTE: This problem has an interesting analytical solution
+// Check on the forum posts.
 int main() {
     for (int m = 2; m <= N; ++m) { // skip the case m = 1
 	int k_lb = 4 - (m & 0x3); 
