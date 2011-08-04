@@ -64,25 +64,41 @@ std::ostream& operator<<(std::ostream& out, const PythagoreanTriple<T>& triple) 
 }
 
 //--------------------------------------------------
-// PythagoreanTripleGenerator<T>
+// True<T>
 //-------------------------------------------------- 
 template<typename T>
+struct True: public std::unary_function<T, bool>
+{
+    bool operator()(const T&) { return true; }
+};
+
+//--------------------------------------------------
+// PythagoreanTripleGenerator<T>
+//-------------------------------------------------- 
+template<typename T, typename Predicate = True<T>>
 class PythagoreanTripleGenerator {
     std::priority_queue<
 	PythagoreanTriple<T>, 
 	std::vector<PythagoreanTriple<T>>, 
 	std::greater<PythagoreanTriple<T>> > pq;
 
+    Predicate pred;
+
 public:
-    PythagoreanTripleGenerator() {
+    PythagoreanTripleGenerator(Predicate pred): pred(pred) {
 	pq.push(PythagoreanTriple<T>::root());
     }
+
+    bool hasNext() const { return !pq.empty(); }
 
     PythagoreanTriple<T> next() {
 	PythagoreanTriple<T> top = pq.top();
 	pq.pop();
 
-	for (int i = 1; i <= 3; ++i) pq.push(top.child(i));
+	for (int i = 1; i <= 3; ++i) {
+	    PythagoreanTriple<T> child = top.child(i);
+	    if (pred(child)) pq.push(child);
+	}
 	return top;
     }
 };
