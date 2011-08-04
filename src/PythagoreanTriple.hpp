@@ -2,22 +2,25 @@
 #define PYTHAGOREAN_TRIPLE_HPP
 
 #include <iostream>
+#include <queue>
 
+//--------------------------------------------------
+// PythagoreanTriple<T>
+//-------------------------------------------------- 
+template<typename T>
 class PythagoreanTriple {
 protected:
-    PythagoreanTriple(int a, int b, int c): a(a), b(b), c(c) { }
+    PythagoreanTriple(T a, T b, T c): a(a), b(b), c(c) { }
 
 public:
-    int a, b, c;
+    T a, b, c;
 
     static PythagoreanTriple root() {
 	return PythagoreanTriple(3, 4, 5);
     }
 
-    //--------------------------------------------------
     // Generation using parent/child relationships.  
     // Consult Berggren (1934) or http://www.hbmeyer.de/pythagen.htm
-    //-------------------------------------------------- 
     PythagoreanTriple child(int n) const {
 	switch (n) {
 	case 1:
@@ -37,24 +40,51 @@ public:
 	}
     }
 
-    int sum() const { return a + b + c; }
+    T sum() const { return a + b + c; }
 
     void print(std::ostream& out) const {
 	out << "(" << a << "," << b << "," << c << ")";
     }
 };
 
-bool operator<(const PythagoreanTriple& t1, const PythagoreanTriple& t2) {
+template<typename T>
+bool operator<(const PythagoreanTriple<T>& t1, const PythagoreanTriple<T>& t2) {
     return t1.a < t2.a || t1.a == t2.a && t1.b < t2.b;
 }
 
-bool operator>(const PythagoreanTriple& t1, const PythagoreanTriple& t2) {
+template<typename T>
+bool operator>(const PythagoreanTriple<T>& t1, const PythagoreanTriple<T>& t2) {
     return t1.a > t2.a || t1.a == t2.a && t1.b > t2.b;
 }
 
-std::ostream& operator<<(std::ostream& out, const PythagoreanTriple& triple) {
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const PythagoreanTriple<T>& triple) {
     triple.print(out);
     return out;
 }
+
+//--------------------------------------------------
+// PythagoreanTripleGenerator<T>
+//-------------------------------------------------- 
+template<typename T>
+class PythagoreanTripleGenerator {
+    std::priority_queue<
+	PythagoreanTriple<T>, 
+	std::vector<PythagoreanTriple<T>>, 
+	std::greater<PythagoreanTriple<T>> > pq;
+
+public:
+    PythagoreanTripleGenerator() {
+	pq.push(PythagoreanTriple<T>::root());
+    }
+
+    PythagoreanTriple<T> next() {
+	PythagoreanTriple<T> top = pq.top();
+	pq.pop();
+
+	for (int i = 1; i <= 3; ++i) pq.push(top.child(i));
+	return top;
+    }
+};
 
 #endif

@@ -7,16 +7,17 @@ const int N = 1500000;
 int numberOfTriples[1 + N];
 
 int main() {
-    std::vector<PythagoreanTriple> pool;
+    typedef PythagoreanTriple<int> Triple;
+    std::vector<Triple> pool;
 
-    if (PythagoreanTriple::root().sum() <= N) {
-	pool.push_back(PythagoreanTriple::root());
+    if (Triple::root().sum() <= N) {
+	pool.push_back(Triple::root());
 	
 	for (int i = 0; i < pool.size(); ++i) { 
 	    int l = pool[i].sum();
 	    for (int m = l; m <= N; m += l) ++numberOfTriples[m];
 	    for (int j = 1; j <= 3; ++j) {
-		PythagoreanTriple newChild = pool[i].child(j);
+		Triple newChild = pool[i].child(j);
 		if (newChild.sum() <= N) pool.push_back(newChild);
 	    }
 	}
