@@ -2,9 +2,9 @@
 #include <gmpxx.h>
 
 // Courtesy of http://oeis.org/A018892
-const int LIMIT = 1000;
-const int M = 7; // maximum number of primes in use
-int primes[M] = { 2, 3, 5, 7, 11, 13, 17 }; 
+const int LIMIT = 4000000;
+const int M = 15;
+int primes[M] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47 }; 
 
 // We want running1 >= 2 * LIMIT while minimizing running2 (< cut)
 mpz_class fit(int index, int ub, mpz_class running1, mpz_class running2, mpz_class cut) {
