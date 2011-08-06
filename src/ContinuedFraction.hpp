@@ -1,21 +1,33 @@
 #ifndef CONTINUED_FRACTION_HPP
 #define CONTINUED_FRACTION_HPP
 
-#include <string>
+#include <iostream>
 #include <vector>
 #include <unordered_map>
 
 #include <gmpxx.h>
 
 class ContinuedFraction {
-    std::vector<int> sequence;
+    std::vector<int> quotients; 
     int period;
 
+protected:
+    ContinuedFraction(): period(0) {}
+    ContinuedFraction(const std::vector<int>& quotients, int period):
+	quotients(quotients), period(period) {}
+
 public:
-    ContinuedFraction(int n): period(0) {
-	sequence.push_back(0);
+    static ContinuedFraction finiteSequence(const std::vector<int>& sequence) {
+	return ContinuedFraction(sequence, 0);
+    }
+
+    static ContinuedFraction squareRoot(int n) {
+	ContinuedFraction fraction;
+
+	fraction.quotients.push_back(0);
 	int r = 0, d = 1;
-	while (n - (r - 1) * (r - 1) >= 0) ++sequence.back(), --r;
+	while (n - (r - 1) * (r - 1) >= 0) 
+	    ++fraction.quotients.back(), --r;
 	d = n - r * r;
 	r = -r;
 
@@ -24,39 +36,64 @@ public:
 	    int sig = d * n + r;
 
 	    if (pool.find(sig) != pool.end()) {
-		period = i - pool[sig];
+		fraction.period = i - pool[sig];
 		break;
 	    }
 
 	    pool[sig] = i;
-	    sequence.push_back(0);
-	    while (n - (r - d) * (r - d) >= 0) ++sequence.back(), r -= d;
+	    fraction.quotients.push_back(0);
+	    while (n - (r - d) * (r - d) >= 0) 
+		++fraction.quotients.back(), r -= d;
 	    d = (n - r * r) / d;
 	    r = -r;
 	}
+
+	return fraction;
     }
 
-    ContinuedFraction(const std::vector<int>& sequence, int period = 0): 
-	sequence(sequence), period(period) {} // shallow copy might suffice
-
     int getPeriod() const { return period; }
-    const std::vector<int>& getSequence() const { return sequence; }
 
     int operator[](int n) const {
 	return 
-	    n < sequence.size()? sequence[n]: 
-	    (period == 0)? 0: sequence[(n - sequence.size()) % period + sequence.size() - period];
+	    n < quotients.size()? quotients[n]: 
+	    (period == 0)? 0: quotients[(n - quotients.size()) % period + quotients.size() - period];
     }
 
     mpq_class getConvergent(int n) const {
-	mpq_class q(0);
-	for (int d = n - 1; d >= 1; --d) {
-	    q += (*this)[d];
-	    mpq_inv(q.get_mpq_t(), q.get_mpq_t());
+	if (n == 0) return mpq_class((*this)[0], 1);
+	if (n == 1) return mpq_class((*this)[0] * (*this)[1] + 1, (*this)[1]);
+
+	mpq_class beforeLast, last((*this)[0], 1);
+	mpq_class current((*this)[0] * (*this)[1] + 1, (*this)[1]);
+
+	for (int i = 2; i <= n; ++i) {
+	    beforeLast = last;
+	    last = current;
+	    current = getNextConvergent(i, beforeLast, last);
 	}
-	q += (*this)[0];
-	return q;
+
+	return current;
+    }
+
+    mpq_class getNextConvergent(int n, mpq_class c1, mpq_class c2) const {
+	int a = (*this)[n];
+	return mpq_class(c1.get_num() + a * c2.get_num(),
+			 c1.get_den() + a * c2.get_den());
+    }
+
+    void print(std::ostream& out) {
+	out << "[" << quotients[0];
+	if (quotients.size() > 1) {
+	    out << ";" << quotients[1];
+	    for (int i = 2; i < quotients.size(); ++i) out << "," << quotients[i];
+	}
+	out << "]";
     }
 };
+
+std::ostream& operator<<(std::ostream& out, ContinuedFraction fraction) {
+    fraction.print(out);
+    return out;
+}
 
 #endif

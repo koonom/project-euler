@@ -12,7 +12,7 @@ int main() {
 	seq.push_back(1);
     }
 
-    ContinuedFraction fraction(seq);
+    ContinuedFraction fraction = ContinuedFraction::finiteSequence(seq);
     mpq_class c = fraction.getConvergent(100);
 
     int sum = 0;
