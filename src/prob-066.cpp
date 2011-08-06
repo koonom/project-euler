@@ -13,7 +13,6 @@ int main() {
 
     // Find ``Pell's equation'' on Wikipedia for more info
     for (int d = 1; d <= D; ++d) {
-	// ContinuedFraction fraction(d);
 	ContinuedFraction fraction = ContinuedFraction::squareRoot(d);
 	if (fraction.getPeriod() == 0) continue;
 
