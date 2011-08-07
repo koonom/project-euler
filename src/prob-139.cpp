@@ -5,38 +5,39 @@
 
 const int L = 100000000;
 
+// NOTE: Analysis goes first.
 int main() {
     ContinuedFraction fraction = ContinuedFraction::squareRoot(2);
 
     mpq_class beforeLast, last, current;
     mpz_class total = 0;
 
-    for (int n = 0; ; ++n) {
+    for (int i = 0; ; ++i) {
 	beforeLast = last;
 	last = current;
-	current = (n == 0 || n == 1)?  fraction.getConvergent(n): 
-	    fraction.getNextConvergent(n, beforeLast, last);
+	current = (i == 0 || i == 1)?  fraction.getConvergent(i): 
+	    fraction.getNextConvergent(i, beforeLast, last);
+
+	if (current.get_den() >= L) break;
 
 	mpz_class s2 = current.get_num() * current.get_num();
 	mpz_class n2 = current.get_den() * current.get_den();
 
 	if (s2 - 2 * n2 == -1) {
-	    mpz_class maxK = L;
-	    maxK /= (current.get_num() + current.get_den());
+	    mpz_class s = current.get_num(), n = current.get_den();
 
-	    if (maxK <= 1) break;
-	    if (current.get_num() == 1) continue;
+	    mpz_class maxK = L - 1;
+	    maxK /= s + n;
 
-	    mpz_class sum = maxK - 1; 
-	    if (current.get_num() % 2 == 0) sum /= 2;
+	    if (maxK <= 0 || s >= 2 * n - 1) continue;
 
-	    std::cout << n << ' ' << current << ' ' << sum << std::endl;
+	    mpz_class sum = maxK; 
+	    if ((s - 1) % 2 == 1) sum /= 2;
+
 	    total += sum;
-
 	}
     }
 
     std::cout << total << "\n";
-
     return 0;
 }
