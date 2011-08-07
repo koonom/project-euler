@@ -1,27 +1,42 @@
 #include <iostream>
 #include <gmpxx.h>
 
-#include "PythagoreanTriple.hpp"
+#include "ContinuedFraction.hpp"
 
-template<typename T>
-struct SumLessThan: public std::unary_function<PythagoreanTriple<T>, bool>
-{
-    T limit;
-
-    SumLessThan(T limit): limit(limit) {}
-
-    bool operator()(const PythagoreanTriple<T>& triple) {
-	return triple.sum() < limit;
-    }
-};
+const int L = 100000000;
 
 int main() {
-    PythagoreanTripleGenerator<mpz_class, SumLessThan<mpz_class>> 
-	gen(SumLessThan<mpz_class>(1000000));
+    ContinuedFraction fraction = ContinuedFraction::squareRoot(2);
 
-    while (gen.hasNext()) {
-	std::cout << gen.next() << "\n";
+    mpq_class beforeLast, last, current;
+    mpz_class total = 0;
+
+    for (int n = 0; ; ++n) {
+	beforeLast = last;
+	last = current;
+	current = (n == 0 || n == 1)?  fraction.getConvergent(n): 
+	    fraction.getNextConvergent(n, beforeLast, last);
+
+	mpz_class s2 = current.get_num() * current.get_num();
+	mpz_class n2 = current.get_den() * current.get_den();
+
+	if (s2 - 2 * n2 == -1) {
+	    mpz_class maxK = L;
+	    maxK /= (current.get_num() + current.get_den());
+
+	    if (maxK <= 1) break;
+	    if (current.get_num() == 1) continue;
+
+	    mpz_class sum = maxK - 1; 
+	    if (current.get_num() % 2 == 0) sum /= 2;
+
+	    std::cout << n << ' ' << current << ' ' << sum << std::endl;
+	    total += sum;
+
+	}
     }
+
+    std::cout << total << "\n";
 
     return 0;
 }
