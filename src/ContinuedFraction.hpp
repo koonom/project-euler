@@ -96,4 +96,24 @@ std::ostream& operator<<(std::ostream& out, ContinuedFraction fraction) {
     return out;
 }
 
+class ConvergentGenerator {
+    ContinuedFraction fraction;
+    mpq_class last[2], current;
+    int nc;
+
+public:
+    ConvergentGenerator(int n): 
+	fraction(ContinuedFraction::squareRoot(n)), nc(0) { }
+
+    const mpq_class& nextConvergent() {
+	last[0] = last[1];
+	last[1] = current;
+	current = (nc == 0 || nc == 1)? fraction.getConvergent(nc):
+	    fraction.getNextConvergent(nc, last[0], last[1]);
+
+	++nc;
+	return current;
+    }
+};
+
 #endif
