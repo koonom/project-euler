@@ -5,10 +5,11 @@ SRC = $(wildcard src/*.cpp)
 PROB = $(patsubst %.cpp,%,$(notdir $(SRC)))
 PROFILED = 
 
-.PHONY: octahedron cube tetrahedron all
+.PHONY: dodecahedron octahedron cube tetrahedron all
 
-octahedron: $(wordlist 101,$(words $(PROB)),$(PROB))
-cube: $(wordlist 51,$(words $(PROB)),$(PROB))
+dodecahedron: $(wordlist 151,$(words $(PROB)),$(PROB))
+octahedron: $(wordlist 101,150,$(PROB))
+cube: $(wordlist 51,100,$(PROB))
 tetrahedron: $(wordlist 1,50,$(PROB))
 
 all: $(PROB)
